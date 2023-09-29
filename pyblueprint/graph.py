@@ -13,7 +13,7 @@ class Graph(QtWidgets.QGraphicsView):
         """Construct a new Graph object and set up the scene."""
         super().__init__(parent)
         self._drag_start = False
-        self._zoom = 100
+        self.zoom = 100
 
         self.init_ui()
 
@@ -88,7 +88,7 @@ class Graph(QtWidgets.QGraphicsView):
                 self.setInteractive(True)
             else:
                 if self.itemAt(event.position().toPoint()) is None:
-                    self._context_menu(event.position().toPoint())
+                    self.context_menu(event.position().toPoint())
                 else:
                     QtWidgets.QGraphicsView.mouseReleaseEvent(self, event)
 
@@ -96,15 +96,15 @@ class Graph(QtWidgets.QGraphicsView):
         """Override wheelEvent to handle zoom."""
         zoom_delta = 10 if event.angleDelta().y() > 0 else -10
 
-        new_zoom = self._zoom + zoom_delta
-        if 50 <= new_zoom <= 100:
-            self.scale(100 / self._zoom, 100 / self._zoom)
-            self._zoom = new_zoom
-            self.scale(self._zoom / 100, self._zoom / 100)
+        newzoom = self.zoom + zoom_delta
+        if 50 <= newzoom <= 100:
+            self.scale(100 / self.zoom, 100 / self.zoom)
+            self.zoom = newzoom
+            self.scale(self.zoom / 100, self.zoom / 100)
 
-            self.zoom_label.setText(f"{self._zoom}%")
+            self.zoom_label.setText(f"{self.zoom}%")
 
-    def _context_menu(self, position: QtCore.QPoint) -> None:
+    def context_menu(self, position: QtCore.QPoint) -> None:
         """Show graph context menu."""
         menu = QtWidgets.QMenu(self)
         exit_action = menu.addAction("Exit")
