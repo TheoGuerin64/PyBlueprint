@@ -5,6 +5,7 @@ from PyQt6 import QtGui, QtWidgets
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    """Main window of the application."""
     def __init__(self) -> None:
         super().__init__()
         self.init_ui()
