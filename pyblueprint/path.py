@@ -1,3 +1,5 @@
+"""Path to the pyblueprint package and its assets."""
+
 import os
 
 PYBLUEPRINT_PATH = os.path.dirname(os.path.dirname(__file__))

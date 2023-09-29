@@ -1,3 +1,5 @@
+"""Main application file for PyBlueprint."""
+
 import sys
 
 from main_window import MainWindow
