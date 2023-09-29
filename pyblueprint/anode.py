@@ -27,8 +27,11 @@ class ANode(QtWidgets.QGraphicsObject):
         self.gradient.setColorAt(0.0, self.GRADIENT_COLOR1)
         self.gradient.setColorAt(1.0, self.GRADIENT_COLOR2)
 
-    def paint(self, painter: QtGui.QPainter, option: QtWidgets.QStyleOptionGraphicsItem, widget: QtWidgets.QWidget = None) -> None:
+    def paint(self, painter: QtGui.QPainter | None, option: QtWidgets.QStyleOptionGraphicsItem | None, widget: QtWidgets.QWidget | None = None) -> None:
         """Paints the node on the graphics scene."""
+        if painter is None:
+            return
+
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
 
         x = round(self.boundingRect().x()) + 1
@@ -76,14 +79,17 @@ class ANode(QtWidgets.QGraphicsObject):
     def boundingRect(self) -> QtCore.QRectF:
         return QtCore.QRectF(2, 2, 150, 100)
 
-    def hoverEnterEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent) -> None:
+    def hoverEnterEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent | None) -> None:
         self.setCursor(QtCore.Qt.CursorShape.SizeAllCursor)
 
-    def hoverLeaveEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent) -> None:
+    def hoverLeaveEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent | None) -> None:
         self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
-    def mousePressEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
+    def mousePressEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mousePressEvent to handle dragging."""
+        if event is None:
+            return
+
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self._drag_start = True
             self._drag_start_pos = self._stick_to_grid(event.pos().toPoint())
@@ -93,14 +99,20 @@ class ANode(QtWidgets.QGraphicsObject):
             self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             QtWidgets.QGraphicsItem.mousePressEvent(self, event)
 
-    def mouseMoveEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
+    def mouseMoveEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
+        if event is None:
+            return
+
         if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
             if self._drag_start:
                 self.setPos(self._stick_to_grid(event.scenePos().toPoint()) - self._drag_start_pos)
 
-    def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
+    def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mouseReleaseEvent to handle dragging."""
+        if event is None:
+            return
+
         if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
             self._drag_start = False
         elif event.button() == QtCore.Qt.MouseButton.RightButton:
@@ -117,7 +129,10 @@ class ANode(QtWidgets.QGraphicsObject):
         destroy_action = menu.addAction("Destroy")
         action = menu.exec(pos)
         if action == destroy_action:
-            self.graph.scene().removeItem(self)
+            scene = self.graph.scene()
+            if scene is None:
+                raise RuntimeError("Scene is None")
+            scene.removeItem(self)
 
     def _stick_to_grid(self, point: QtCore.QPoint) -> QtCore.QPointF:
         """Sticks a point to the grid."""

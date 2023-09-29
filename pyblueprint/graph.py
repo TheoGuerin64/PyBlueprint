@@ -36,8 +36,11 @@ class Graph(QtWidgets.QGraphicsView):
         self.zoom_label.setGeometry(QtCore.QRect(4, 0, 46, 20))
         self.zoom_label.setStyleSheet("color: grey")
 
-    def drawBackground(self, painter: QtGui.QPainter, rect: QtCore.QRectF) -> None:
+    def drawBackground(self, painter: QtGui.QPainter | None, rect: QtCore.QRectF) -> None:
         """Override drawBackground to draw grid and axis."""
+        if painter is None:
+            return
+
         half_width = round(self.sceneRect().width() / 2)
         half_height = round(self.sceneRect().height() / 2)
 
@@ -63,8 +66,11 @@ class Graph(QtWidgets.QGraphicsView):
         painter.drawLine(0, -half_height, 0, half_height)
         painter.drawLine(-half_width, 0, half_width, 0)
 
-    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
+        if event is None:
+            return
+
         if event.buttons() == QtCore.Qt.MouseButton.RightButton:
             if not self._drag_start:
                 self._drag_start = True
@@ -80,8 +86,11 @@ class Graph(QtWidgets.QGraphicsView):
                 QtWidgets.QGraphicsView.mousePressEvent(self, e)
         QtWidgets.QGraphicsView.mouseMoveEvent(self, event)
 
-    def mouseReleaseEvent(self, event: QtGui.QMouseEvent) -> None:
+    def mouseReleaseEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseReleaseEvent to handle drag end and context menu."""
+        if event is None:
+            return
+
         if event.button() == QtCore.Qt.MouseButton.RightButton:
             if self._drag_start:
                 self._drag_start = False
@@ -93,8 +102,11 @@ class Graph(QtWidgets.QGraphicsView):
                 else:
                     QtWidgets.QGraphicsView.mouseReleaseEvent(self, event)
 
-    def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
+    def wheelEvent(self, event: QtGui.QWheelEvent | None) -> None:
         """Override wheelEvent to handle zoom."""
+        if event is None:
+            return
+
         zoom_delta = 10 if event.angleDelta().y() > 0 else -10
 
         newzoom = self.zoom + zoom_delta
@@ -113,9 +125,15 @@ class Graph(QtWidgets.QGraphicsView):
         action = menu.exec(self.mapToGlobal(position))
         if action == add_print_action:
             node_pos = self.mapToScene(position).toPoint()
-            new_node = Print(self, node_pos.x(), node_pos.y())
-            self.scene().addItem(new_node)
+            new_print_node = Print(self, node_pos.x(), node_pos.y())
+            scene = self.scene()
+            if scene is None:
+                raise RuntimeError("Scene is None")
+            scene.addItem(new_print_node)
         elif action == add_branch_action:
             node_pos = self.mapToScene(position).toPoint()
-            new_node = Branch(self, node_pos.x(), node_pos.y())
-            self.scene().addItem(new_node)
+            new_branch_node = Branch(self, node_pos.x(), node_pos.y())
+            scene = self.scene()
+            if scene is None:
+                raise RuntimeError("Scene is None")
+            scene.addItem(new_branch_node)
