@@ -1,3 +1,4 @@
+from anode import ANode
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
@@ -107,7 +108,39 @@ class Graph(QtWidgets.QGraphicsView):
     def context_menu(self, position: QtCore.QPoint) -> None:
         """Show graph context menu."""
         menu = QtWidgets.QMenu(self)
-        exit_action = menu.addAction("Exit")
+        add_print_action = menu.addAction("Add print")
+        add_branch_action = menu.addAction("Add branch")
         action = menu.exec(self.mapToGlobal(position))
-        if action == exit_action:
-            self.parent().close()
+        if action == add_print_action:
+            node_pos = self.mapToScene(position).toPoint()
+            new_node = ANode(self, node_pos.x(), node_pos.y())
+            self.scene().addItem(new_node)
+        elif action == add_branch_action:
+            node_pos = self.mapToScene(position).toPoint()
+            new_node = ANode(self, node_pos.x(), node_pos.y())
+            self.scene().addItem(new_node)
+
+"""
+/**
+ * @brief Show graph context menu,
+ * @param position of the context menu.
+ */
+void Graph::_contextMenu(QPoint pos)
+{
+	QMenu menu(this);
+	QAction *addPrintAction = menu.addAction("Add print");
+	QAction *addBranchAction = menu.addAction("Add branch");
+	QAction *action = menu.exec(this->mapToGlobal(pos));
+	if (action == addPrintAction)
+	{
+		QPoint nodePos = this->mapToScene(pos).toPoint();
+		ANode *newNode = new Print(this, nodePos.x(), nodePos.y());
+		this->scene()->addItem(newNode);
+	} else if (action == addBranchAction)
+	{
+		QPoint nodePos = this->mapToScene(pos).toPoint();
+		ANode *newNode = new Branch(this, nodePos.x(), nodePos.y());
+		this->scene()->addItem(newNode);
+	}
+}
+"""
