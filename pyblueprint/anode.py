@@ -97,7 +97,6 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
             self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             if event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
                 self.setSelected(not self.isSelected())
-                return
 
             self._drag_start = True
             self._drag_start_pos = self._stick_to_grid(event.pos().toPoint())
