@@ -84,11 +84,7 @@ class Graph(QtWidgets.QGraphicsView):
             return
 
         if not self._drag_start and self.is_left_or_right_click(event):
-            scene = self.scene()
-            if scene is None:
-                raise RuntimeError("Scene is None")
-
-            if scene.selectedItems() == [] or event.buttons() == QtCore.Qt.MouseButton.RightButton:
+            if self.scene().selectedItems() == [] or event.buttons() == QtCore.Qt.MouseButton.RightButton:
                 self._drag_start = True
                 if event.buttons() == QtCore.Qt.MouseButton.RightButton:
                     self.setDragMode(QtWidgets.QGraphicsView.DragMode.ScrollHandDrag)
@@ -153,17 +149,11 @@ class Graph(QtWidgets.QGraphicsView):
         if action == add_print_action:
             node_pos = self.mapToScene(position).toPoint()
             new_print_node = Print(self, node_pos.x(), node_pos.y())
-            scene = self.scene()
-            if scene is None:
-                raise RuntimeError("Scene is None")
-            scene.addItem(new_print_node)
+            self.scene().addItem(new_print_node)
         elif action == add_branch_action:
             node_pos = self.mapToScene(position).toPoint()
             new_branch_node = Branch(self, node_pos.x(), node_pos.y())
-            scene = self.scene()
-            if scene is None:
-                raise RuntimeError("Scene is None")
-            scene.addItem(new_branch_node)
+            self.scene().addItem(new_branch_node)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
         """Override keyPressEvent to handle node deletion."""
@@ -171,10 +161,7 @@ class Graph(QtWidgets.QGraphicsView):
             return
 
         if event.key() == QtCore.Qt.Key.Key_Delete:
-            scene = self.scene()
-            if scene is None:
-                raise RuntimeError("Scene is None")
-            for item in scene.selectedItems():
-                scene.removeItem(item)
+            for item in self.scene().selectedItems():
+                self.scene().removeItem(item)
         else:
             QtWidgets.QGraphicsView.keyPressEvent(self, event)
