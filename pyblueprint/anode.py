@@ -1,18 +1,20 @@
+from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from utils import ABCQtMeta
 
 if TYPE_CHECKING:
     from graph import Graph
 
 
-class ANode(QtWidgets.QGraphicsObject):
+class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     """A parent abstract class for nodes."""
     _TOP_SIZE = 25
 
-    NAME: str = "Node"
-    GRADIENT_COLOR1: QtGui.QColor = QtGui.QColor(0, 0, 0)
-    GRADIENT_COLOR2: QtGui.QColor = QtGui.QColor(0, 0, 0)
+    NAME: str
+    GRADIENT_COLOR1: QtGui.QColor
+    GRADIENT_COLOR2: QtGui.QColor
     def __init__(self, graph: "Graph", x: int, y: int):
         super().__init__()
         self.graph = graph
@@ -140,3 +142,8 @@ class ANode(QtWidgets.QGraphicsObject):
             point.x() - point.x() % 20,
             point.y() - point.y() % 20
         )
+
+    @abstractmethod
+    def execute(self) -> None:
+        """Executes the node."""
+        pass
