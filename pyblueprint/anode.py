@@ -19,8 +19,8 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     def __init__(self, graph: "Graph", x: int, y: int):
         super().__init__()
         self.graph = graph
-        self._dragStart = False
-        self._dragStartPos = QtCore.QPoint()
+        self._drag_start = False
+        self._drag_start_pos = QtCore.QPointF()
 
         self.setPos(self._stick_to_grid(QtCore.QPoint(x, y)))
         self.setAcceptHoverEvents(True)
@@ -94,12 +94,16 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
             return
 
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
+            if event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
+                self.setSelected(not self.isSelected())
+                return
+
             self._drag_start = True
             self._drag_start_pos = self._stick_to_grid(event.pos().toPoint())
 
             # TODO: make it in top of the scene
 
-            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
             QtWidgets.QGraphicsItem.mousePressEvent(self, event)
 
     def mouseMoveEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
