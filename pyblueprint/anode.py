@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
-    """A parent abstract class for nodes."""
+    """Abstract class for nodes."""
     _TOP_SIZE = 25
 
     NAME: str

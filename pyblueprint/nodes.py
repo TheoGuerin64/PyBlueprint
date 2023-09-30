@@ -1,3 +1,5 @@
+"""This module contains the nodes that are used in the blueprint."""
+
 from anode import ANode
 from PyQt6 import QtGui
 

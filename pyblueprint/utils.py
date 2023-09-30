@@ -1,3 +1,5 @@
+"""Utilities for pyblueprint"""
+
 from abc import ABCMeta
 
 from PyQt6 import sip
