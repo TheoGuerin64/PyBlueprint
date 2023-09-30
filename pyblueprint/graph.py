@@ -18,6 +18,9 @@ class Graph(QtWidgets.QGraphicsView):
 
         self.init_ui()
 
+        self._half_width = round(self.sceneRect().width() / 2)
+        self._half_height = round(self.sceneRect().height() / 2)
+
     def init_ui(self) -> None:
         """Initialize the UI."""
         self.setScene(QtWidgets.QGraphicsScene(self))
@@ -41,30 +44,27 @@ class Graph(QtWidgets.QGraphicsView):
         if painter is None:
             return
 
-        half_width = round(self.sceneRect().width() / 2)
-        half_height = round(self.sceneRect().height() / 2)
-
         # Draw background
         painter.fillRect(rect, self.BACKGROUND_COLOR)
 
         # Draw secondary lines
         painter.setPen(self.SECONDARY_LINE_COLOR)
-        for x in range(-half_width, half_width, 20):
-            painter.drawLine(x, -half_height, x, half_height)
-        for y in range(-half_height, half_height, 20):
-            painter.drawLine(-half_width, y, half_width, y)
+        for x in range(-self._half_width, self._half_width, 20):
+            painter.drawLine(x, -self._half_height, x, self._half_height)
+        for y in range(-self._half_height, self._half_height, 20):
+            painter.drawLine(-self._half_width, y, self._half_width, y)
 
         # Draw main lines
         painter.setPen(self.MAIN_LINE_COLOR)
-        for x in range(-half_width, half_width, 100):
-            painter.drawLine(x, -half_height, x, half_height)
-        for y in range(-half_height, half_height, 100):
-            painter.drawLine(-half_width, y, half_width, y)
+        for x in range(-self._half_width, self._half_width, 100):
+            painter.drawLine(x, -self._half_height, x, self._half_height)
+        for y in range(-self._half_height, self._half_height, 100):
+            painter.drawLine(-self._half_width, y, self._half_width, y)
 
         # Draw axis lines
         painter.setPen(self.AXIS_COLOR)
-        painter.drawLine(0, -half_height, 0, half_height)
-        painter.drawLine(-half_width, 0, half_width, 0)
+        painter.drawLine(0, -self._half_height, 0, self._half_height)
+        painter.drawLine(-self._half_width, 0, self._half_width, 0)
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
