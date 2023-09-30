@@ -21,6 +21,14 @@ class Graph(QtWidgets.QGraphicsView):
         self._half_width = round(self.sceneRect().width() / 2)
         self._half_height = round(self.sceneRect().height() / 2)
 
+    def scene(self) -> QtWidgets.QGraphicsScene:
+        """Override scene to return a typed scene."""
+
+        scene = super().scene()
+        if scene is None:
+            raise RuntimeError("Scene is None")
+        return scene
+
     def init_ui(self) -> None:
         """Initialize the UI."""
         self.setScene(QtWidgets.QGraphicsScene(self))
@@ -66,16 +74,28 @@ class Graph(QtWidgets.QGraphicsView):
         painter.drawLine(0, -self._half_height, 0, self._half_height)
         painter.drawLine(-self._half_width, 0, self._half_width, 0)
 
+    def is_left_or_right_click(self, event: QtGui.QMouseEvent) -> bool:
+        """Return True if the event is a left or right click."""
+        return event.buttons() == QtCore.Qt.MouseButton.LeftButton or event.buttons() == QtCore.Qt.MouseButton.RightButton
+
     def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
         if event is None:
             return
 
-        if event.buttons() == QtCore.Qt.MouseButton.RightButton:
-            if not self._drag_start:
+        if not self._drag_start and self.is_left_or_right_click(event):
+            scene = self.scene()
+            if scene is None:
+                raise RuntimeError("Scene is None")
+
+            if scene.selectedItems() == [] or event.buttons() == QtCore.Qt.MouseButton.RightButton:
                 self._drag_start = True
-                self.setDragMode(QtWidgets.QGraphicsView.DragMode.ScrollHandDrag)
-                self.setInteractive(False)
+                if event.buttons() == QtCore.Qt.MouseButton.RightButton:
+                    self.setDragMode(QtWidgets.QGraphicsView.DragMode.ScrollHandDrag)
+                    self.setInteractive(False)
+                else:
+                    self.setDragMode(QtWidgets.QGraphicsView.DragMode.RubberBandDrag)
+                    self.setInteractive(True)
 
                 e = QtGui.QMouseEvent(
                     QtCore.QEvent.Type.MouseButtonPress,
@@ -101,6 +121,13 @@ class Graph(QtWidgets.QGraphicsView):
                     self.context_menu(event.position().toPoint())
                 else:
                     QtWidgets.QGraphicsView.mouseReleaseEvent(self, event)
+        elif event.button() == QtCore.Qt.MouseButton.LeftButton:
+            if self._drag_start:
+                self._drag_start = False
+                self.setDragMode(QtWidgets.QGraphicsView.DragMode.NoDrag)
+                self.setInteractive(True)
+            else:
+                QtWidgets.QGraphicsView.mouseReleaseEvent(self, event)
 
     def wheelEvent(self, event: QtGui.QWheelEvent | None) -> None:
         """Override wheelEvent to handle zoom."""
