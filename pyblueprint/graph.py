@@ -137,3 +137,14 @@ class Graph(QtWidgets.QGraphicsView):
             if scene is None:
                 raise RuntimeError("Scene is None")
             scene.addItem(new_branch_node)
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
+        """Override keyPressEvent to handle node deletion."""
+        if event is None:
+            return
+
+        if event.key() == QtCore.Qt.Key.Key_Delete:
+            for item in self.scene().selectedItems():
+                self.scene().removeItem(item)
+        else:
+            QtWidgets.QGraphicsView.keyPressEvent(self, event)
