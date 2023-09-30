@@ -15,6 +15,7 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     NAME: str
     GRADIENT_COLOR1: QtGui.QColor
     GRADIENT_COLOR2: QtGui.QColor
+
     def __init__(self, graph: "Graph", x: int, y: int):
         super().__init__()
         self.graph = graph
