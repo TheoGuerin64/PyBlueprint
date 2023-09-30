@@ -50,7 +50,7 @@ class Graph(QtWidgets.QGraphicsView):
     def drawBackground(self, painter: QtGui.QPainter | None, rect: QtCore.QRectF) -> None:
         """Override drawBackground to draw grid and axis."""
         if painter is None:
-            return
+            raise RuntimeError("Painter is None")
 
         # Draw background
         painter.fillRect(rect, self.BACKGROUND_COLOR)
@@ -81,7 +81,7 @@ class Graph(QtWidgets.QGraphicsView):
     def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
         if event is None:
-            return
+            raise RuntimeError("Event is None")
 
         if not self._drag_start and self.is_left_or_right_click(event):
             if self.scene().selectedItems() == [] or event.buttons() == QtCore.Qt.MouseButton.RightButton:
@@ -105,7 +105,7 @@ class Graph(QtWidgets.QGraphicsView):
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseReleaseEvent to handle drag end and context menu."""
         if event is None:
-            return
+            raise RuntimeError("Event is None")
 
         if event.button() == QtCore.Qt.MouseButton.RightButton:
             if self._drag_start:
@@ -128,7 +128,7 @@ class Graph(QtWidgets.QGraphicsView):
     def wheelEvent(self, event: QtGui.QWheelEvent | None) -> None:
         """Override wheelEvent to handle zoom."""
         if event is None:
-            return
+            raise RuntimeError("Event is None")
 
         zoom_delta = 10 if event.angleDelta().y() > 0 else -10
 
@@ -158,7 +158,7 @@ class Graph(QtWidgets.QGraphicsView):
     def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
         """Override keyPressEvent to handle node deletion."""
         if event is None:
-            return
+            raise RuntimeError("Event is None")
 
         if event.key() == QtCore.Qt.Key.Key_Delete:
             for item in self.scene().selectedItems():

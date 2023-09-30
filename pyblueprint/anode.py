@@ -33,7 +33,7 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     def paint(self, painter: QtGui.QPainter | None, option: QtWidgets.QStyleOptionGraphicsItem | None, widget: QtWidgets.QWidget | None = None) -> None:
         """Paints the node on the graphics scene."""
         if painter is None:
-            return
+            raise RuntimeError("Painter is None")
 
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
 
@@ -91,7 +91,7 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     def mousePressEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mousePressEvent to handle dragging."""
         if event is None:
-            return
+            raise RuntimeError("Event is None")
 
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
@@ -108,7 +108,7 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     def mouseMoveEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
         if event is None:
-            return
+            raise RuntimeError("Event is None")
 
         if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
             if self._drag_start:
@@ -117,7 +117,7 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mouseReleaseEvent to handle dragging."""
         if event is None:
-            return
+            raise RuntimeError("Event is None")
 
         if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
             self._drag_start = False
