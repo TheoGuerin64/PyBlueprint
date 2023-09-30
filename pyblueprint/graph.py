@@ -144,7 +144,10 @@ class Graph(QtWidgets.QGraphicsView):
             return
 
         if event.key() == QtCore.Qt.Key.Key_Delete:
-            for item in self.scene().selectedItems():
-                self.scene().removeItem(item)
+            scene = self.scene()
+            if scene is None:
+                raise RuntimeError("Scene is None")
+            for item in scene.selectedItems():
+                scene.removeItem(item)
         else:
             QtWidgets.QGraphicsView.keyPressEvent(self, event)
