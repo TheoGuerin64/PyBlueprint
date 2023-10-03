@@ -15,6 +15,7 @@ class AGraphItem(QtWidgets.QGraphicsItem, metaclass=ABCQtMeta):
         self.graph = graph
         self._drag_start = False
         self._drag_start_pos = QtCore.QPointF()
+        self._single_click = False
 
         self.setPos(self._stick_to_grid(QtCore.QPoint(x, y)))
 
@@ -27,7 +28,9 @@ class AGraphItem(QtWidgets.QGraphicsItem, metaclass=ABCQtMeta):
     def mousePressEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mousePressEvent to handle dragging."""
         assert event is not None
-        if event.button() == QtCore.Qt.MouseButton.LeftButton and event.modifiers() == QtCore.Qt.KeyboardModifier.NoModifier:
+        if event.button() == QtCore.Qt.MouseButton.LeftButton and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
+            self._single_click = True
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
             self._drag_start = True
@@ -39,13 +42,15 @@ class AGraphItem(QtWidgets.QGraphicsItem, metaclass=ABCQtMeta):
         """Override mouseMoveEvent to handle dragging."""
         assert event is not None
         if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
-            if self._drag_start:
+            if not self._single_click and self._drag_start:
                 self.setPos(self._stick_to_grid(event.scenePos().toPoint()) - self._drag_start_pos)
 
     def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mouseReleaseEvent to handle dragging."""
         assert event is not None
-        if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
+        if self._single_click:
+            self._single_click = False
+        elif event.buttons() == QtCore.Qt.MouseButton.LeftButton:
             self._drag_start = False
         elif event.button() == QtCore.Qt.MouseButton.RightButton:
             self.setSelected(True)
