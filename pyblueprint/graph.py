@@ -76,7 +76,7 @@ class Graph(QtWidgets.QGraphicsView):
 
     def is_empty_left_or_right_click(self, event: QtGui.QMouseEvent) -> bool:
         """Check if left click is empty."""
-        return (event.buttons() == QtCore.Qt.MouseButton.LeftButton and self.scene().selectedItems() == []
+        return (event.buttons() == QtCore.Qt.MouseButton.LeftButton and self.itemAt(event.position().toPoint()) is None
                 or event.buttons() == QtCore.Qt.MouseButton.RightButton)
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
