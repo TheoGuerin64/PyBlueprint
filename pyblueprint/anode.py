@@ -2,13 +2,15 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+
+from agraph_item import AGraphItem
 from utils import ABCQtMeta
 
 if TYPE_CHECKING:
     from graph import Graph
 
 
-class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
+class ANode(AGraphItem, metaclass=ABCQtMeta):
     """Abstract class for nodes."""
     _TOP_SIZE = 25
 
@@ -17,12 +19,7 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     GRADIENT_COLOR2: QtGui.QColor
 
     def __init__(self, graph: "Graph", x: int, y: int):
-        super().__init__()
-        self.graph = graph
-        self._drag_start = False
-        self._drag_start_pos = QtCore.QPointF()
-
-        self.setPos(self._stick_to_grid(QtCore.QPoint(x, y)))
+        super().__init__(graph, x, y)
         self.setAcceptHoverEvents(True)
         self.setFlags(QtWidgets.QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
 
@@ -30,11 +27,15 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
         self.gradient.setColorAt(0.0, self.GRADIENT_COLOR1)
         self.gradient.setColorAt(1.0, self.GRADIENT_COLOR2)
 
+    def scene(self) -> QtWidgets.QGraphicsScene:
+        """Override scene to return a typed scene."""
+        scene = super().scene()
+        assert scene is not None
+        return scene
+
     def paint(self, painter: QtGui.QPainter | None, option: QtWidgets.QStyleOptionGraphicsItem | None, widget: QtWidgets.QWidget | None = None) -> None:
         """Paints the node on the graphics scene."""
-        if painter is None:
-            raise RuntimeError("Painter is None")
-
+        assert painter is not None
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
 
         x = round(self.boundingRect().x()) + 1
@@ -88,45 +89,6 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
     def hoverLeaveEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent | None) -> None:
         self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
-    def mousePressEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
-        """Override mousePressEvent to handle dragging."""
-        if event is None:
-            raise RuntimeError("Event is None")
-
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
-            self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
-            if event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
-                self.setSelected(not self.isSelected())
-
-            self._drag_start = True
-            self._drag_start_pos = self._stick_to_grid(event.pos().toPoint())
-
-            # TODO: make it in top of the scene
-
-            QtWidgets.QGraphicsItem.mousePressEvent(self, event)
-
-    def mouseMoveEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
-        """Override mouseMoveEvent to handle dragging."""
-        if event is None:
-            raise RuntimeError("Event is None")
-
-        if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
-            if self._drag_start:
-                self.setPos(self._stick_to_grid(event.scenePos().toPoint()) - self._drag_start_pos)
-
-    def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
-        """Override mouseReleaseEvent to handle dragging."""
-        if event is None:
-            raise RuntimeError("Event is None")
-
-        if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
-            self._drag_start = False
-        elif event.button() == QtCore.Qt.MouseButton.RightButton:
-            for item in self.graph.items():
-                item.setSelected(False)
-            self.setSelected(True)
-            self.context_menu(event.screenPos())
-
     def context_menu(self, pos: QtCore.QPoint) -> None:
         """Shows the context menu of the node."""
         self.setSelected(True)
@@ -135,10 +97,7 @@ class ANode(QtWidgets.QGraphicsObject, metaclass=ABCQtMeta):
         destroy_action = menu.addAction("Destroy")
         action = menu.exec(pos)
         if action == destroy_action:
-            scene = self.graph.scene()
-            if scene is None:
-                raise RuntimeError("Scene is None")
-            scene.removeItem(self)
+            self.scene().removeItem(self)
 
     def _stick_to_grid(self, point: QtCore.QPoint) -> QtCore.QPointF:
         """Sticks a point to the grid."""

@@ -2,8 +2,9 @@
 
 import sys
 
-from main_window import MainWindow
 from PyQt6 import QtWidgets
+
+from main_window import MainWindow
 
 
 def main() -> None:

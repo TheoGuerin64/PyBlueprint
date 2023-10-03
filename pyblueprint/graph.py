@@ -1,5 +1,7 @@
-from nodes import Branch, Print
 from PyQt6 import QtCore, QtGui, QtWidgets
+
+from nodes import Branch, Print
+from selection_group import SelectionGroup
 
 
 class Graph(QtWidgets.QGraphicsView):
@@ -21,12 +23,13 @@ class Graph(QtWidgets.QGraphicsView):
         self._half_width = round(self.sceneRect().width() / 2)
         self._half_height = round(self.sceneRect().height() / 2)
 
+        self.selected = SelectionGroup(self)
+        self.scene().addItem(self.selected)
+
     def scene(self) -> QtWidgets.QGraphicsScene:
         """Override scene to return a typed scene."""
-
         scene = super().scene()
-        if scene is None:
-            raise RuntimeError("Scene is None")
+        assert scene is not None
         return scene
 
     def init_ui(self) -> None:
@@ -49,8 +52,7 @@ class Graph(QtWidgets.QGraphicsView):
 
     def drawBackground(self, painter: QtGui.QPainter | None, rect: QtCore.QRectF) -> None:
         """Override drawBackground to draw grid and axis."""
-        if painter is None:
-            raise RuntimeError("Painter is None")
+        assert painter is not None
 
         # Draw background
         painter.fillRect(rect, self.BACKGROUND_COLOR)
@@ -74,13 +76,26 @@ class Graph(QtWidgets.QGraphicsView):
         painter.drawLine(0, -self._half_height, 0, self._half_height)
         painter.drawLine(-self._half_width, 0, self._half_width, 0)
 
+    def leftOrRightClick(self, event: QtGui.QMouseEvent) -> bool:
+        """Check if the event is a left or right click."""
+        return (event.buttons() == QtCore.Qt.MouseButton.LeftButton
+                or event.buttons() == QtCore.Qt.MouseButton.RightButton)
+
+    def itemsAtEventAreSelected(self, event: QtGui.QMouseEvent) -> bool:
+        """Check if the items at the event are selected."""
+        return self.itemAt(event.position().toPoint()) not in self.selected.childItems()
+
+    def mousePressEvent(self, event: QtGui.QMouseEvent | None) -> None:
+        """Override mousePressEvent to handle dragging."""
+        assert event is not None
+        if self.leftOrRightClick(event) and self.itemsAtEventAreSelected(event):
+            self.selected.clear()
+        QtWidgets.QGraphicsView.mousePressEvent(self, event)
+
     def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
-        if event is None:
-            raise RuntimeError("Event is None")
-
-        if not self._drag_start and (event.buttons() == QtCore.Qt.MouseButton.LeftButton
-                                     or event.buttons() == QtCore.Qt.MouseButton.RightButton):
+        assert event is not None
+        if not self._drag_start and self.leftOrRightClick(event):
             self._drag_start = True
 
             if event.buttons() == QtCore.Qt.MouseButton.RightButton or self.itemAt(event.position().toPoint()) is None:
@@ -102,10 +117,16 @@ class Graph(QtWidgets.QGraphicsView):
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseReleaseEvent to handle drag end and context menu."""
-        if event is None:
-            raise RuntimeError("Event is None")
-
+        assert event is not None
         if self._drag_start:
+            if self.dragMode() == QtWidgets.QGraphicsView.DragMode.RubberBandDrag:
+                for item in self.selected.childItems():
+                    item.setGroup(None)
+                    item.setSelected(False)
+                for item in self.scene().selectedItems():
+                    item.setGroup(self.selected)
+                    item.setSelected(True)
+
             self._drag_start = False
             self.setDragMode(QtWidgets.QGraphicsView.DragMode.NoDrag)
             self.setInteractive(True)
@@ -119,9 +140,7 @@ class Graph(QtWidgets.QGraphicsView):
 
     def wheelEvent(self, event: QtGui.QWheelEvent | None) -> None:
         """Override wheelEvent to handle zoom."""
-        if event is None:
-            raise RuntimeError("Event is None")
-
+        assert event is not None
         zoom_delta = 10 if event.angleDelta().y() > 0 else -10
 
         newzoom = self.zoom + zoom_delta
@@ -149,11 +168,12 @@ class Graph(QtWidgets.QGraphicsView):
 
     def keyPressEvent(self, event: QtGui.QKeyEvent | None) -> None:
         """Override keyPressEvent to handle node deletion."""
-        if event is None:
-            raise RuntimeError("Event is None")
-
+        assert event is not None
         if event.key() == QtCore.Qt.Key.Key_Delete:
-            for item in self.scene().selectedItems():
-                self.scene().removeItem(item)
+            if self.selected.childItems() != []:
+                self.selected.delete()
+            else:
+                for item in self.scene().selectedItems():
+                    self.scene().removeItem(item)
         else:
             QtWidgets.QGraphicsView.keyPressEvent(self, event)
