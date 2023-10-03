@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 from nodes import Branch, Print
 from selection_group import SelectionGroup
+
+if TYPE_CHECKING:
+    from anode import ANode
 
 
 class Graph(QtWidgets.QGraphicsView):
@@ -16,6 +21,8 @@ class Graph(QtWidgets.QGraphicsView):
         """Construct a new Graph object and set up the scene."""
         super().__init__(parent)
         self._drag_start = False
+        self._single_click = False
+        self.last_selected: "ANode" | None = None
         self.zoom = 100
 
         self.init_ui()
@@ -88,14 +95,26 @@ class Graph(QtWidgets.QGraphicsView):
     def mousePressEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mousePressEvent to handle dragging."""
         assert event is not None
-        if self.leftOrRightClick(event) and not self.itemsAtEventAreSelected(event):
+        if event.buttons() == QtCore.Qt.MouseButton.LeftButton and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
+            item = self.itemAt(event.position().toPoint())
+            if item is not None:
+                if self.last_selected is not None and self.last_selected.isSelected():
+                    self.last_selected.setGroup(self.selected)
+                if item.group() is not None:
+                    item.setGroup(None)
+                    item.setSelected(False)
+                else:
+                    item.setGroup(self.selected)
+                    item.setSelected(True)
+            self._single_click = True
+        elif self.leftOrRightClick(event) and not self.itemsAtEventAreSelected(event):
             self.selected.clear()
         QtWidgets.QGraphicsView.mousePressEvent(self, event)
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
         assert event is not None
-        if not self._drag_start and self.leftOrRightClick(event):
+        if not self._single_click and not self._drag_start and self.leftOrRightClick(event):
             self._drag_start = True
 
             if event.buttons() == QtCore.Qt.MouseButton.RightButton or self.itemAt(event.position().toPoint()) is None:
@@ -118,7 +137,9 @@ class Graph(QtWidgets.QGraphicsView):
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseReleaseEvent to handle drag end and context menu."""
         assert event is not None
-        if self._drag_start:
+        if self._single_click:
+            self._single_click = False
+        elif self._drag_start:
             if self.dragMode() == QtWidgets.QGraphicsView.DragMode.RubberBandDrag:
                 self.selected.clear()
                 for item in self.scene().selectedItems():

@@ -27,7 +27,7 @@ class AGraphItem(QtWidgets.QGraphicsItem, metaclass=ABCQtMeta):
     def mousePressEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
         """Override mousePressEvent to handle dragging."""
         assert event is not None
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+        if event.button() == QtCore.Qt.MouseButton.LeftButton and event.modifiers() == QtCore.Qt.KeyboardModifier.NoModifier:
             self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
             self._drag_start = True

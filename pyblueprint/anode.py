@@ -89,6 +89,11 @@ class ANode(AGraphItem, metaclass=ABCQtMeta):
     def hoverLeaveEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent | None) -> None:
         self.setCursor(QtCore.Qt.CursorShape.ArrowCursor)
 
+    def mousePressEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent | None) -> None:
+        assert event is not None
+        super().mousePressEvent(event)
+        self.graph.last_selected = self
+
     def context_menu(self, pos: QtCore.QPoint) -> None:
         """Shows the context menu of the node."""
         self.setSelected(True)
