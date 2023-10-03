@@ -103,7 +103,7 @@ class Graph(QtWidgets.QGraphicsView):
                 if item.group() is not None:
                     item.setGroup(None)
                     item.setSelected(False)
-                else:
+                elif item != self.selected:
                     item.setGroup(self.selected)
                     item.setSelected(True)
             self._single_click = True
