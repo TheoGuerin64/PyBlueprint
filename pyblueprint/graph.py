@@ -74,32 +74,30 @@ class Graph(QtWidgets.QGraphicsView):
         painter.drawLine(0, -self._half_height, 0, self._half_height)
         painter.drawLine(-self._half_width, 0, self._half_width, 0)
 
-    def is_empty_left_or_right_click(self, event: QtGui.QMouseEvent) -> bool:
-        """Check if left click is empty."""
-        return (event.buttons() == QtCore.Qt.MouseButton.LeftButton and self.itemAt(event.position().toPoint()) is None
-                or event.buttons() == QtCore.Qt.MouseButton.RightButton)
-
     def mouseMoveEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mouseMoveEvent to handle dragging."""
         if event is None:
             raise RuntimeError("Event is None")
 
-        if not self._drag_start and self.is_empty_left_or_right_click(event):
+        if not self._drag_start and (event.buttons() == QtCore.Qt.MouseButton.LeftButton
+                                     or event.buttons() == QtCore.Qt.MouseButton.RightButton):
             self._drag_start = True
-            if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
-                self.setDragMode(QtWidgets.QGraphicsView.DragMode.RubberBandDrag)
-                self.setInteractive(True)
-            else:
-                self.setDragMode(QtWidgets.QGraphicsView.DragMode.ScrollHandDrag)
-                self.setInteractive(False)
 
-            left_click_event = QtGui.QMouseEvent(
-                QtCore.QEvent.Type.MouseButtonPress,
-                event.position(), event.globalPosition(),
-                QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.MouseButton.NoButton,
-                QtCore.Qt.KeyboardModifier.NoModifier
-            )
-            QtWidgets.QGraphicsView.mousePressEvent(self, left_click_event)
+            if event.buttons() == QtCore.Qt.MouseButton.RightButton or self.itemAt(event.position().toPoint()) is None:
+                if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
+                    self.setDragMode(QtWidgets.QGraphicsView.DragMode.RubberBandDrag)
+                    self.setInteractive(True)
+                else:
+                    self.setDragMode(QtWidgets.QGraphicsView.DragMode.ScrollHandDrag)
+                    self.setInteractive(False)
+
+                left_click_event = QtGui.QMouseEvent(
+                    QtCore.QEvent.Type.MouseButtonPress,
+                    event.position(), event.globalPosition(),
+                    QtCore.Qt.MouseButton.LeftButton, QtCore.Qt.MouseButton.NoButton,
+                    QtCore.Qt.KeyboardModifier.NoModifier
+                )
+                QtWidgets.QGraphicsView.mousePressEvent(self, left_click_event)
         QtWidgets.QGraphicsView.mouseMoveEvent(self, event)
 
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent | None) -> None:
