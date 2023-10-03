@@ -48,8 +48,6 @@ class AGraphItem(QtWidgets.QGraphicsItem, metaclass=ABCQtMeta):
         if event.buttons() == QtCore.Qt.MouseButton.LeftButton:
             self._drag_start = False
         elif event.button() == QtCore.Qt.MouseButton.RightButton:
-            for item in self.graph.items():
-                item.setSelected(False)
             self.setSelected(True)
             self.context_menu(event.screenPos())
 

@@ -83,12 +83,12 @@ class Graph(QtWidgets.QGraphicsView):
 
     def itemsAtEventAreSelected(self, event: QtGui.QMouseEvent) -> bool:
         """Check if the items at the event are selected."""
-        return self.itemAt(event.position().toPoint()) not in self.selected.childItems()
+        return self.itemAt(event.position().toPoint()) in self.selected.childItems()
 
     def mousePressEvent(self, event: QtGui.QMouseEvent | None) -> None:
         """Override mousePressEvent to handle dragging."""
         assert event is not None
-        if self.leftOrRightClick(event) and self.itemsAtEventAreSelected(event):
+        if self.leftOrRightClick(event) and not self.itemsAtEventAreSelected(event):
             self.selected.clear()
         QtWidgets.QGraphicsView.mousePressEvent(self, event)
 
@@ -120,9 +120,7 @@ class Graph(QtWidgets.QGraphicsView):
         assert event is not None
         if self._drag_start:
             if self.dragMode() == QtWidgets.QGraphicsView.DragMode.RubberBandDrag:
-                for item in self.selected.childItems():
-                    item.setGroup(None)
-                    item.setSelected(False)
+                self.selected.clear()
                 for item in self.scene().selectedItems():
                     item.setGroup(self.selected)
                     item.setSelected(True)
