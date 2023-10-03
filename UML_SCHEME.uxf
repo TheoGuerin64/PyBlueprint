@@ -1,0 +1,53 @@
+<diagram program="umletino" version="15.1"><zoom_level>9</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>486</x><y>225</y><w>135</w><h>45</h></coordinates><panel_attributes>bg=#7acff5
+Graph: QGraphicsView
+--
+selected:
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>477</x><y>81</y><w>162</w><h>45</h></coordinates><panel_attributes>bg=#7acff5
+MainWindow: QMainWindow
+--
+centralWidget: QWidget
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>549</x><y>117</y><w>108</w><h>126</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+m1=1
+m2=1
+r2=+ centralWidget</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>UMLClass</id><coordinates><x>459</x><y>315</y><w>198</w><h>45</h></coordinates><panel_attributes>bg=#7acff5
+/AGraphItem: QGraphicsItem/
+--
+--
+/context_menu(self, pos: QPoint): None/</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>648</x><y>333</y><w>90</w><h>27</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;80;10</additional_attributes></element><element><id>Relation</id><coordinates><x>612</x><y>234</y><w>243</w><h>99</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
+m1=1
+m2=*</panel_attributes><additional_attributes>10;10;240;10;240;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>315</y><w>207</w><h>99</h></coordinates><panel_attributes>bg=#7acff5
+/ANode/
+--
+NAME: str
+GRADIENT_COLOR1: QtGui.QColor
+GRADIENT_COLOR2: QtGui.QColor
+--
+context_menu(self, pos: QPoint): None
+/execute(self): None/</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>180</x><y>315</y><w>207</w><h>72</h></coordinates><panel_attributes>bg=#7acff5
+SelectionGroup: QGraphicsItemGroup
+--
+--
+clear(self): None
+delete(self): None
+context_menu(self, pos: QPoint): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>378</x><y>333</y><w>99</w><h>27</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>90;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>270</x><y>234</y><w>234</w><h>99</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-&gt;
+m1=1
+m2=1</panel_attributes><additional_attributes>240;10;10;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>405</y><w>27</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>UMLClass</id><coordinates><x>558</x><y>495</y><w>252</w><h>99</h></coordinates><panel_attributes>bg=#7acff5
+/Print/
+--
+NAME: str = Print
+GRADIENT_COLOR1: QColor = QColor(255, 0, 0)
+GRADIENT_COLOR2: QColor = QColor(60, 60, 60)
+--
+context_menu(self, pos: QPoint): None
+execute(self): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>846</x><y>495</y><w>252</w><h>99</h></coordinates><panel_attributes>bg=#7acff5
+/Branch/
+--
+NAME: str = Branch
+GRADIENT_COLOR1: QColor = QColor(255, 0, 0)
+GRADIENT_COLOR2: QColor = QColor(60, 60, 60)
+--
+context_menu(self, pos: QPoint): None
+execute(self): None</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>675</x><y>450</y><w>171</w><h>63</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>170;10;10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>450</y><w>171</w><h>63</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;170;10;170;50</additional_attributes></element><element><id>Relation</id><coordinates><x>963</x><y>450</y><w>198</w><h>54</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;200;10;200;40</additional_attributes></element><element><id>Text</id><coordinates><x>1134</x><y>477</y><w>45</w><h>36</h></coordinates><panel_attributes>...
+style=wordwrap
+fontsize=24
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>
