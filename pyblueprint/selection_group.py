@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 from .agraph_item import AGraphItem
-from .settings import settings
 
 if TYPE_CHECKING:
     from .graph import Graph
+    from .main_window import MainWindow
 
 
 class SelectionGroup(QtWidgets.QGraphicsItemGroup, AGraphItem):
@@ -37,7 +37,8 @@ class SelectionGroup(QtWidgets.QGraphicsItemGroup, AGraphItem):
     def paint(self, painter: QtGui.QPainter | None, option: QtWidgets.QStyleOptionGraphicsItem | None, widget: QtWidgets.QWidget | None = None) -> None:
         """Override paint to draw a rectangle around the group."""
         assert painter is not None
-        if settings["debug"]:
+        mainWindow: MainWindow = self.graph.parent()  # type: ignore
+        if mainWindow.settings.value("debug"):
             painter.drawRect(self.boundingRect())
 
     def context_menu(self, pos: QtCore.QPoint) -> None:

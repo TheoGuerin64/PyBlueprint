@@ -6,7 +6,6 @@ import argparse
 from PyQt6 import QtWidgets
 
 from pyblueprint.main_window import MainWindow
-from pyblueprint.settings import settings
 
 
 def parse_args() -> argparse.Namespace:
@@ -18,11 +17,10 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    if args.debug:
-        settings["debug"] = True
 
     app = QtWidgets.QApplication([])
     window = MainWindow()
+    window.settings.setValue("debug", args.debug)
     window.show()
     sys.exit(app.exec())
 
