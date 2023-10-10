@@ -7,7 +7,7 @@ from .agraph_item import AGraphItem
 from .utils import ABCQtMeta
 
 if TYPE_CHECKING:
-    from graph import Graph
+    from .graph import Graph
 
 
 class ANode(AGraphItem, metaclass=ABCQtMeta):

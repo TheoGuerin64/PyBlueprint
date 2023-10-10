@@ -6,7 +6,7 @@ from PyQt6 import QtCore, QtWidgets
 from .utils import ABCQtMeta
 
 if TYPE_CHECKING:
-    from graph import Graph
+    from .graph import Graph
 
 
 class AGraphItem(QtWidgets.QGraphicsItem, metaclass=ABCQtMeta):

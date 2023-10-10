@@ -6,7 +6,7 @@ from .agraph_item import AGraphItem
 from .settings import settings
 
 if TYPE_CHECKING:
-    from graph import Graph
+    from .graph import Graph
 
 
 class SelectionGroup(QtWidgets.QGraphicsItemGroup, AGraphItem):
