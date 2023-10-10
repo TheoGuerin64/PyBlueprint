@@ -2,7 +2,7 @@
 
 from PyQt6 import QtGui
 
-from anode import ANode
+from .anode import ANode
 
 
 class Print(ANode):

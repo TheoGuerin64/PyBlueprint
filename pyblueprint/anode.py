@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
-from agraph_item import AGraphItem
-from utils import ABCQtMeta
+from .agraph_item import AGraphItem
+from .utils import ABCQtMeta
 
 if TYPE_CHECKING:
     from graph import Graph

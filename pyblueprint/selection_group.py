@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
-from agraph_item import AGraphItem
-from settings import settings
+from .agraph_item import AGraphItem
+from .settings import settings
 
 if TYPE_CHECKING:
     from graph import Graph

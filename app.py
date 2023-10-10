@@ -5,8 +5,8 @@ import sys
 import argparse
 from PyQt6 import QtWidgets
 
-from main_window import MainWindow
-from settings import settings
+from pyblueprint.main_window import MainWindow
+from pyblueprint.settings import settings
 
 
 def parse_args() -> argparse.Namespace:

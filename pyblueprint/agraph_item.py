@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from PyQt6 import QtCore, QtWidgets
 
-from utils import ABCQtMeta
+from .utils import ABCQtMeta
 
 if TYPE_CHECKING:
     from graph import Graph

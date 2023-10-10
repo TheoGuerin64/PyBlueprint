@@ -1,7 +1,7 @@
 from PyQt6 import QtGui, QtWidgets
 
-from graph import Graph
-from path import ICON_PATH
+from .graph import Graph
+from .path import ICON_PATH
 
 
 class MainWindow(QtWidgets.QMainWindow):

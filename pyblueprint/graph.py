@@ -2,11 +2,11 @@ from typing import TYPE_CHECKING
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
-from nodes import Branch, Print
-from selection_group import SelectionGroup
+from .nodes import Branch, Print
+from .selection_group import SelectionGroup
 
 if TYPE_CHECKING:
-    from anode import ANode
+    from .anode import ANode
 
 
 class Graph(QtWidgets.QGraphicsView):
